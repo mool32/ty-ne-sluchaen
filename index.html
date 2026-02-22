@@ -225,7 +225,7 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
   <div id="welcome" class="screen active">
     <h1>Ты не случаен</h1>
     <p class="subtitle">Попробуй обыграть алгоритм</p>
-    <p class="desc">Нажимай на <strong>правую</strong> и <strong>левую</strong> половины экрана в случайном порядке. Алгоритм будет предсказывать каждое твоё следующее нажатие.<br><br>Угадал &mdash; ты теряешь <strong>$1</strong>.<br>Не угадал &mdash; ты получаешь <strong>$1.05</strong>.</p>
+    <p class="desc">Нажимай на <strong>правую</strong> и <strong>левую</strong> половины экрана в случайном порядке. Алгоритм будет предсказывать каждое твоё следующее нажатие.<br><br>Угадал &mdash; ты теряешь <strong>$1</strong>.<br>Не угадал &mdash; ты получаешь <strong>$0.95</strong>.</p>
     <button class="btn-start" id="btnStart">Играть</button>
   </div>
 
@@ -259,7 +259,7 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
 const LEVELS = [
   { id: 1, name: 'Уровень 1', presses: 100,  balance: 50,  label: 'УРОВЕНЬ 1', css: 'l1', stopMin: 20 },
   { id: 2, name: 'Уровень 2', presses: 200,  balance: 100, label: 'УРОВЕНЬ 2', css: 'l2', stopMin: 50 },
-  { id: 3, name: 'Уровень 3', presses: 500,  balance: 200, label: 'УРОВЕНЬ 3', css: 'l3', stopMin: 100 },
+  { id: 3, name: 'Уровень 3', presses: 300,  balance: 200, label: 'УРОВЕНЬ 3', css: 'l3', stopMin: 80 },
 ];
 
 // ===== STATE =====
@@ -387,8 +387,12 @@ function createRipple(x, y) {
 }
 
 // ===== GAME PRESS =====
-function handlePress(choice, x, y) {
+let activePointerId = null;
+
+function handlePress(choice, x, y, pointerId) {
   if (state.gameOver) return;
+  // Block multitouch: only one finger at a time
+  if (activePointerId !== null && activePointerId !== pointerId) return;
   const now = Date.now();
   if (now - state.lastPressTime < MIN_INTERVAL) return;
   state.lastPressTime = now;
@@ -406,7 +410,7 @@ function handlePress(choice, x, y) {
     state.predictions.push(prediction);
     state.correct.push(hit);
     if (hit) { state.correctPredictions++; state.balance -= 1.00; }
-    else { state.balance += 1.05; }
+    else { state.balance += 0.95; }
     state.balance = Math.round(state.balance * 100) / 100;
     state.balanceHistory.push(state.balance);
     flashResult(hit);
@@ -549,7 +553,7 @@ function showResult() {
     const nx = LEVELS[state.level + 1];
     levelUpHTML = '<div class="result-level-up fade-item" style="animation-delay:350ms"><div class="level-up-title">Открыт ' + nx.name + '!</div><div class="level-up-desc">' + nx.presses + ' нажатий, $' + nx.balance + ' на старте</div></div>';
   } else if (won && !hasNext) {
-    levelUpHTML = '<div class="result-level-up fade-item" style="animation-delay:350ms"><div class="level-up-title" style="color:#ff2244">Все уровни пройдены!</div><div class="level-up-desc">Ты прошёл 500 нажатий и не проиграл.</div></div>';
+    levelUpHTML = '<div class="result-level-up fade-item" style="animation-delay:350ms"><div class="level-up-title" style="color:#ff2244">Все уровни пройдены!</div><div class="level-up-desc">Ты прошёл 300 нажатий и не проиграл.</div></div>';
   }
 
   let btns = '';
@@ -617,7 +621,7 @@ function showTheory() {
     '<p>Люди не умеют быть случайными. Когда ты нажимаешь «лево-право-лево-право» &mdash; тебе кажется, что это случайно. Но настоящая случайность выглядит иначе: в ней регулярно бывает 4&ndash;5 одинаковых подряд, и это нормально.</p>' +
     '<p>Алгоритм запоминает, что ты делал после каждой комбинации последних нажатий. Например: <em>«после лево-право-лево этот человек 5 раз нажал право и 1 раз лево &mdash; ставлю на право»</em>. Таких комбинаций десятки, и по каждой алгоритм ведёт счёт.</p>' +
     '<div class="example-box"><strong>Почему первые 3 нажатия не считаются?</strong> Алгоритм только собирает данные &mdash; ему нужна хотя бы минимальная история, чтобы начать предсказывать. Это как разминка: он смотрит, но ещё не ставит.</div>' +
-    '<p><strong>Почему выигрыш $1.05, а проигрыш $1.00?</strong> Шансы немного в твою пользу. Если бы ты был идеально случайным, ты бы медленно зарабатывал. Но алгоритм угадывает чаще 50% &mdash; и этого хватает, чтобы перевесить твоё преимущество.</p>' +
+    '<p><strong>Почему проигрыш $1, а выигрыш только $0.95?</strong> Шансы чуть-чуть против тебя. Даже если ты будешь идеально случайным (50/50), ты будешь медленно терять деньги. А алгоритм угадывает больше 50% &mdash; и ты теряешь ещё быстрее. Чтобы выиграть, нужно быть <em>лучше</em> случайного &mdash; а это почти невозможно для человека.</p>' +
     '<p>Идею этой демонстрации придумал <a href="https://en.wikipedia.org/wiki/Scott_Aaronson" target="_blank">Скотт Ааронсон</a>, профессор информатики, чтобы показать: человеческий мозг &mdash; плохой генератор случайных чисел.</p>' +
 
     '<div style="text-align:center"><button class="btn-primary theory-play-btn" id="btnPlay1">Играть снова</button></div>' +
@@ -701,8 +705,16 @@ document.getElementById('btnStart').addEventListener('click', () => startGame(0)
 document.getElementById('game').addEventListener('pointerdown', (e) => {
   if (state.screen !== 'game' || state.gameOver) return;
   if (e.target.closest('.btn-stop')) return;
+  activePointerId = e.pointerId;
   const rect = document.getElementById('game').getBoundingClientRect();
-  handlePress(e.clientX < window.innerWidth / 2 ? 0 : 1, e.clientX - rect.left, e.clientY - rect.top);
+  handlePress(e.clientX < window.innerWidth / 2 ? 0 : 1, e.clientX - rect.left, e.clientY - rect.top, e.pointerId);
+});
+
+document.getElementById('game').addEventListener('pointerup', (e) => {
+  if (e.pointerId === activePointerId) activePointerId = null;
+});
+document.getElementById('game').addEventListener('pointercancel', (e) => {
+  if (e.pointerId === activePointerId) activePointerId = null;
 });
 
 document.getElementById('btnStop').addEventListener('click', () => {
