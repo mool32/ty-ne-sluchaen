@@ -725,6 +725,19 @@ document.getElementById('btnStop').addEventListener('click', () => {
   }
 });
 
+// ===== KEYBOARD (arrows) =====
+document.addEventListener('keydown', (e) => {
+  if (state.screen !== 'game' || state.gameOver) return;
+  let choice = -1;
+  if (e.key === 'ArrowLeft') choice = 0;
+  else if (e.key === 'ArrowRight') choice = 1;
+  if (choice < 0) return;
+  e.preventDefault();
+  const cx = choice === 0 ? window.innerWidth * 0.25 : window.innerWidth * 0.75;
+  const cy = window.innerHeight * 0.5;
+  handlePress(choice, cx, cy, 'keyboard');
+});
+
 try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('portrait').catch(()=>{}); } catch(e){}
 </script>
 </body>
