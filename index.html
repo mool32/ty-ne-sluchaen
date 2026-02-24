@@ -30,11 +30,16 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
 .screen.active { opacity: 1; pointer-events: auto; }
 
 /* ===== WELCOME ===== */
-#welcome { padding: 2rem; text-align: center; gap: 2rem; }
+#welcome { padding: 2rem; text-align: center; gap: 1.5rem; }
 #welcome h1 { font-size: 2.4rem; font-weight: 700; color: #fff; letter-spacing: -0.03em; line-height: 1.1; }
 #welcome .subtitle { font-size: 1rem; color: #00ff88; font-weight: 700; }
-#welcome .desc { font-size: 0.85rem; color: #888; line-height: 1.7; max-width: 320px; }
-#welcome .desc strong { color: #e0e0e0; }
+#welcome .rules {
+  font-size: 1rem; color: #ccc; line-height: 2; max-width: 340px;
+}
+#welcome .rules strong { color: #fff; }
+#welcome .rules .lose { color: #ff2244; font-weight: 700; }
+#welcome .rules .win { color: #00ff88; font-weight: 700; }
+#welcome .desc-small { font-size: 0.75rem; color: #555; line-height: 1.6; max-width: 300px; }
 
 .btn-start {
   background: #00ff88; color: #0a0a0a; border: none;
@@ -48,6 +53,12 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
   0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
   50% { box-shadow: 0 0 40px rgba(0, 255, 136, 0.6); }
 }
+
+.welcome-footer {
+  font-size: 0.65rem; color: #333;
+}
+.welcome-footer a { color: #444; text-decoration: none; border-bottom: 1px solid #333; }
+.welcome-footer a:hover { color: #888; }
 
 /* ===== GAME ===== */
 #game { user-select: none; touch-action: manipulation; cursor: pointer; }
@@ -219,12 +230,17 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
 
 .btn-lang {
   position: absolute; top: 1rem; right: 1rem; z-index: 10;
-  background: transparent; border: 1px solid #333; color: #666;
-  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700;
-  padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer;
+  background: transparent; border: 1px solid #555; color: #888;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700;
+  padding: 0.35rem 0.7rem; border-radius: 4px; cursor: pointer;
   letter-spacing: 0.05em;
+  animation: lang-pulse 2s ease-in-out infinite;
 }
-.btn-lang:hover { color: #aaa; border-color: #555; }
+.btn-lang:hover { color: #fff; border-color: #888; }
+@keyframes lang-pulse {
+  0%, 100% { border-color: #555; color: #888; }
+  50% { border-color: #00ff88; color: #00ff88; }
+}
 </style>
 </head>
 <body>
@@ -233,10 +249,12 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
   <!-- WELCOME -->
   <div id="welcome" class="screen active">
     <button class="btn-lang" id="btnLang">EN</button>
-    <h1 id="welTitle">Ты не случаен</h1>
-    <p class="subtitle" id="welSubtitle">Попробуй обыграть алгоритм</p>
-    <p class="desc" id="welDesc"></p>
-    <button class="btn-start" id="btnStart">Играть</button>
+    <h1 id="welTitle"></h1>
+    <p class="subtitle" id="welSubtitle"></p>
+    <div class="rules" id="welRules"></div>
+    <button class="btn-start" id="btnStart"></button>
+    <p class="desc-small" id="welHint"></p>
+    <div class="welcome-footer" id="welFooter"></div>
   </div>
 
   <!-- GAME -->
@@ -247,11 +265,11 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
     <div class="zone-label right">1</div>
     <div class="game-hud">
       <div class="hud-level" id="hudLevel"></div>
-      <div class="hud-balance" id="hudBalance">$50.00</div>
+      <div class="hud-balance" id="hudBalance">$15.00</div>
       <div class="hud-prediction-result" id="hudPredResult"></div>
     </div>
-    <div class="hud-bottom" id="hudCounter">0/100</div>
-    <button class="btn-stop" id="btnStop" disabled>Стоп</button>
+    <div class="hud-bottom" id="hudCounter">0/50</div>
+    <button class="btn-stop" id="btnStop" disabled></button>
   </div>
 
   <!-- RESULT -->
@@ -270,12 +288,12 @@ const LANG = {
   ru: {
     title: 'Ты не случаен',
     subtitle: 'Попробуй обыграть алгоритм',
-    descLine1: 'Нажимай на <strong>правую</strong> и <strong>левую</strong> половины экрана в случайном порядке. Алгоритм будет предсказывать каждое твоё следующее нажатие.',
-    descLine2: 'Угадал \u2014 ты теряешь <strong>$1</strong>.<br>Не угадал \u2014 ты получаешь <strong>$1.05</strong>.',
+    rulesHTML: 'Нажимай <strong>лево</strong> и <strong>право</strong> в случайном порядке.<br>Алгоритм предсказывает каждое нажатие.<br><br>Угадал \u2014 <span class="lose">ты теряешь $1</span><br>Не угадал \u2014 <span class="win">ты получаешь $1.10</span>',
     play: 'Играть',
     stop: 'Стоп',
-    // result
-    bankrupt: 'Алгоритм забрал всё',
+    hint: 'На компьютере: стрелки \u2190 \u2192',
+    level: 'УРОВЕНЬ',
+    levelName: 'Уровень',
     won: 'Ты обыграл алгоритм!',
     predictable70: 'Ты полностью предсказуем',
     predictable60: 'Алгоритм читает тебя',
@@ -294,43 +312,44 @@ const LANG = {
     unlocked: 'Открыт',
     pressesWord: 'нажатий',
     atStart: 'на старте',
-    stakes: 'ставки',
     allLevels: 'Все уровни пройдены!',
-    allLevelsDesc: '300 нажатий, ставки $1/$1, и ты выстоял.',
-    // theory
+    allLevelsDesc: 'Ты прошёл все три уровня.',
     theoryTitle: 'Как это работает?',
     back: 'Назад',
     playAgain: 'Играть снова',
     author: 'Демонстрация',
-    t1title: 'Шаг за шагом: что делает алгоритм',
-    t1p1: 'Представь, что кто-то записывает каждое твоё нажатие. После 10 нажатий запись выглядит так: <strong>Л П Л Л П Л П П Л П</strong>. Алгоритм ищет в этой записи повторяющиеся фрагменты.',
-    t1ex1: '<strong>Пример.</strong> Допустим, ты уже три раза нажал «лево-право» и после этого каждый раз нажимал «лево». Алгоритм это запомнил. Когда ты снова нажмёшь «лево-право» \u2014 он поставит на «лево». И скорее всего будет прав.',
-    t1p2: 'Алгоритм ведёт таблицу: для каждой комбинации последних нажатий он считает, сколько раз после неё было «лево» и сколько \u2014 «право». Чем больше данных \u2014 тем точнее прогноз.',
-    t1p3: 'Но он смотрит не на одну длину. У него <strong>несколько моделей одновременно</strong>: одна помнит 1 нажатие назад, другая \u2014 2, третья \u2014 3, и так далее. На первом уровне глубина до 3, на втором \u2014 до 5, на третьем \u2014 до 8. Все модели «голосуют», и алгоритм выбирает по большинству.',
-    t1ex2: '<strong>Почему первые 3 нажатия бесплатные?</strong> Алгоритму нужна минимальная история, чтобы начать предсказывать. Первые 3 нажатия \u2014 разминка: он смотрит, но ещё не ставит.',
-    t1p4: '<strong>Экономика.</strong> На уровнях 1\u20132 за промах алгоритма ты получаешь $1.05, а за угадывание теряешь $1. Форы немного \u2014 но алгоритм угадывает чаще, чем промахивается, и этого достаточно. На уровне 3 ставки равны: $1/$1, без форы.',
+    // theory
+    t1title: 'Шаг за шагом',
+    t1p1: 'Алгоритм записывает каждое нажатие. После 10 нажатий: <strong>Л П Л Л П Л П П Л П</strong>. Он ищет в этой записи закономерности.',
+    t1ex1: '<strong>Пример.</strong> Ты три раза нажал «лево-право» и каждый раз потом нажал «лево». Алгоритм запомнил. Следующий раз после «лево-право» \u2014 он ставит на «лево».',
+    t1p2: 'Для каждой комбинации последних нажатий алгоритм считает: сколько раз после неё было «лево», сколько «право». Чем больше данных \u2014 тем точнее.',
+    t1p3: 'Одновременно работают <strong>несколько моделей разной глубины</strong>. На уровне 1 \u2014 до 3 нажатий назад. На уровне 2 \u2014 до 5. На уровне 3 \u2014 до 8. Все голосуют, побеждает большинство.',
+    t1p4: '<strong>Память между уровнями.</strong> Алгоритм не сбрасывается. Всё, что он узнал о тебе на первом уровне, он использует на втором и третьем. Чем дольше играешь \u2014 тем лучше он тебя знает.',
+    t1p5: '<strong>Экономика.</strong> За промах алгоритм платит $1.10, за угадывание забирает $1. Если бы ты был идеально случайным \u2014 ты бы зарабатывал. Но алгоритм угадывает больше 50%, и этого хватает.',
     t2title: 'Почему ты проигрываешь',
-    t2p1: 'Люди думают, что случайность \u2014 это чередование. «Лево-право-лево-право» кажется случайным. Но настоящая случайность другая: в ней бывает 4\u20135 одинаковых подряд, и это нормально.',
-    t2li1: '<strong><a href="https://en.wikipedia.org/wiki/Gambler%27s_fallacy" target="_blank">Заблуждение игрока</a></strong> \u2014 после трёх «лево» кажется, что пора нажать «право». Монетке всё равно, что было до этого.',
-    t2li2: '<strong>Страх серий</strong> \u2014 4 одинаковых подряд кажутся неслучайными. Но при 100 бросках монетки серия 4+ почти гарантирована.',
-    t2li3: '<strong>Подсознательные ритмы</strong> \u2014 лево-лево-право-право, или лево-право-лево. Ты не замечаешь, а алгоритм \u2014 видит.',
-    t2p2: '<strong>Длинная дистанция.</strong> На 100 нажатиях алгоритм видел каждую комбинацию 1\u20133 раза \u2014 можно повезти. На 300 у него 5\u201315 наблюдений на каждую, и везение заканчивается. Это <a href="https://ru.wikipedia.org/wiki/Закон_больших_чисел" target="_blank">закон больших чисел</a>.',
-    t2p3: 'Идею придумал <a href="https://en.wikipedia.org/wiki/Scott_Aaronson" target="_blank">Скотт Ааронсон</a>, профессор информатики: человеческий мозг \u2014 плохой генератор случайных чисел. Такие же алгоритмы используются в сжатии данных (ZIP). Если последовательность предсказуема \u2014 её можно сжать.',
+    t2p1: 'Люди путают случайность с чередованием. «Лево-право-лево-право» кажется случайным, но настоящая случайность \u2014 это когда бывает 4\u20135 одинаковых подряд.',
+    t2li1: '<strong><a href="https://en.wikipedia.org/wiki/Gambler%27s_fallacy" target="_blank">Заблуждение игрока</a></strong> \u2014 после трёх «лево» кажется, что пора нажать «право». Монетке всё равно.',
+    t2li2: '<strong>Страх серий</strong> \u2014 4 подряд кажутся неслучайными. Но при 100 бросках серия 4+ почти гарантирована.',
+    t2li3: '<strong>Ритмы</strong> \u2014 лево-лево-право-право. Ты не замечаешь, алгоритм видит.',
+    t2random: '<strong>«А может алгоритм просто угадывает случайно?»</strong> Нет. Если бы он ставил наугад, ты бы выигрывал \u2014 экономика в твою пользу ($1.10 против $1). Если ты проигрываешь \u2014 значит, он угадывает чаще 52%. А это возможно только если твои нажатия предсказуемы.',
+    t2p2: '<strong>Длинная дистанция.</strong> На 50 нажатиях можно повезти. К 120-му алгоритм уже знает твои привычки. <a href="https://ru.wikipedia.org/wiki/Закон_больших_чисел" target="_blank">Закон больших чисел</a>.',
+    t2p3: 'Идею придумал <a href="https://en.wikipedia.org/wiki/Scott_Aaronson" target="_blank">Скотт Ааронсон</a>: мозг \u2014 плохой генератор случайных чисел. Те же алгоритмы работают в сжатии данных (ZIP): предсказуемое = сжимаемое.',
     t3title: 'Математика',
-    t3p1: 'Алгоритм \u2014 это <a href="https://en.wikipedia.org/wiki/Prediction_by_partial_matching" target="_blank">Prediction by Partial Matching</a>: ансамбль <a href="https://ru.wikipedia.org/wiki/Цепь_Маркова" target="_blank">марковских моделей</a> разных порядков. Для каждого порядка k он хранит таблицу контекстов и считает частоты:',
-    t3formula: 'Контекст s = последние k нажатий<br>C(s, 0) и C(s, 1) \u2014 счётчики<br><br>P(1|s) = (C(s,1) + 1) / (C(s,0) + C(s,1) + 2)<br><small>(<a href="https://ru.wikipedia.org/wiki/Сглаживание_Лапласа" target="_blank">сглаживание Лапласа</a> \u2014 байесовский приор Beta(1,1))</small><br><br>score += (P(1|s) \u2212 P(0|s)) \u00b7 \u221atotal \u00b7 (1 + k/2)<br><small>Больший k и больше данных = больше вес</small>',
-    t3p2: 'Дополнительно: глобальный bias (общая склонность к 0 или 1), тенденция к чередованию, и momentum последних 10 нажатий. Всё суммируется в один score, и алгоритм ставит на знак этого score.',
-    t3p3: '<a href="https://ru.wikipedia.org/wiki/Информационная_энтропия" target="_blank">Энтропия</a> случайной последовательности = 1 бит/символ. Человеческая \u2248 0.7\u20130.9 бит. Эта разница \u2014 и есть преимущество алгоритма.',
+    t3p1: '<a href="https://en.wikipedia.org/wiki/Prediction_by_partial_matching" target="_blank">Prediction by Partial Matching</a> \u2014 ансамбль <a href="https://ru.wikipedia.org/wiki/Цепь_Маркова" target="_blank">марковских моделей</a>:',
+    t3formula: 'Контекст s = последние k нажатий<br>C(s, 0) и C(s, 1) \u2014 счётчики<br><br>P(1|s) = (C(s,1) + 1) / (C(s,0) + C(s,1) + 2)<br><small><a href="https://ru.wikipedia.org/wiki/Сглаживание_Лапласа" target="_blank">Лаплас</a>: приор Beta(1,1)</small><br><br>score += (P(1|s) \u2212 P(0|s)) \u00b7 \u221atotal \u00b7 (1 + k/2)',
+    t3p2: 'Плюс: глобальный bias, тенденция к чередованию, momentum последних 10 нажатий.',
+    t3p3: '<a href="https://ru.wikipedia.org/wiki/Информационная_энтропия" target="_blank">Энтропия</a> случайной последовательности = 1 бит. Человеческая \u2248 0.7\u20130.9 бит. Разница \u2014 преимущество алгоритма.',
     langSwitch: 'EN',
   },
   en: {
     title: 'You\'re Not Random',
     subtitle: 'Try to beat the algorithm',
-    descLine1: 'Tap the <strong>left</strong> and <strong>right</strong> halves of the screen in a random order. The algorithm will try to predict your every next tap.',
-    descLine2: 'It guesses right \u2014 you lose <strong>$1</strong>.<br>It guesses wrong \u2014 you earn <strong>$1.05</strong>.',
+    rulesHTML: 'Tap <strong>left</strong> and <strong>right</strong> in a random order.<br>The algorithm predicts every tap.<br><br>It\'s right \u2014 <span class="lose">you lose $1</span><br>It\'s wrong \u2014 <span class="win">you earn $1.10</span>',
     play: 'Play',
     stop: 'Stop',
-    bankrupt: 'The algorithm took everything',
+    hint: 'Desktop: arrow keys \u2190 \u2192',
+    level: 'LEVEL',
+    levelName: 'Level',
     won: 'You beat the algorithm!',
     predictable70: 'Completely predictable',
     predictable60: 'The algorithm reads you',
@@ -349,45 +368,45 @@ const LANG = {
     unlocked: 'Unlocked',
     pressesWord: 'taps',
     atStart: 'start',
-    stakes: 'stakes',
     allLevels: 'All levels completed!',
-    allLevelsDesc: '300 taps, $1/$1 stakes, and you survived.',
+    allLevelsDesc: 'You beat all three levels.',
     theoryTitle: 'How does it work?',
     back: 'Back',
     playAgain: 'Play again',
     author: 'Demo by',
-    t1title: 'Step by step: what the algorithm does',
-    t1p1: 'Imagine someone writes down every tap you make. After 10 taps: <strong>L R L L R L R R L R</strong>. The algorithm searches this record for repeating patterns.',
-    t1ex1: '<strong>Example.</strong> Say you tapped "left-right" three times and each time followed it with "left". The algorithm remembers this. Next time you tap "left-right" \u2014 it bets on "left". And it\'s probably right.',
-    t1p2: 'The algorithm keeps a table: for every combination of recent taps, it counts how often "left" or "right" followed. More data = better predictions.',
-    t1p3: 'It doesn\'t look at just one length. It runs <strong>multiple models simultaneously</strong>: one remembers 1 tap back, another 2, another 3, and so on. Level 1 goes up to 3 deep, level 2 up to 5, level 3 up to 8. All models "vote" and the majority wins.',
-    t1ex2: '<strong>Why are the first 3 taps free?</strong> The algorithm needs minimal history to start predicting. The first 3 taps are warm-up: it watches, but doesn\'t bet.',
-    t1p4: '<strong>Economy.</strong> On levels 1\u20132, you earn $1.05 for each miss and lose $1 for each correct guess. Slight edge for you \u2014 but the algorithm guesses right more than half the time, and that\'s enough. Level 3 is even: $1/$1, no advantage.',
+    t1title: 'Step by step',
+    t1p1: 'The algorithm records every tap. After 10: <strong>L R L L R L R R L R</strong>. It searches for patterns.',
+    t1ex1: '<strong>Example.</strong> You tapped "left-right" three times and each time followed with "left". The algorithm remembered. Next "left-right" \u2014 it bets "left".',
+    t1p2: 'For every combination of recent taps, it counts how often "left" or "right" followed. More data = better predictions.',
+    t1p3: '<strong>Multiple models run simultaneously</strong> at different depths. Level 1: up to 3 taps back. Level 2: up to 5. Level 3: up to 8. They all vote.',
+    t1p4: '<strong>Memory across levels.</strong> The algorithm doesn\'t reset. Everything it learned about you on level 1 carries into levels 2 and 3. The longer you play, the better it knows you.',
+    t1p5: '<strong>Economy.</strong> The algorithm pays $1.10 for each miss and takes $1 for each correct guess. If you were perfectly random, you\'d profit. But it guesses right more than 50%, and that\'s enough.',
     t2title: 'Why you lose',
-    t2p1: 'Humans think randomness means alternating. "Left-right-left-right" feels random. But real randomness includes 4\u20135 identical taps in a row \u2014 and that\'s normal.',
-    t2li1: '<strong><a href="https://en.wikipedia.org/wiki/Gambler%27s_fallacy" target="_blank">Gambler\'s fallacy</a></strong> \u2014 after three "lefts" it feels like time for "right". A coin doesn\'t care what came before.',
-    t2li2: '<strong>Streak avoidance</strong> \u2014 4 identical in a row feels non-random. But in 100 coin flips, a streak of 4+ is almost guaranteed.',
-    t2li3: '<strong>Subconscious rhythms</strong> \u2014 left-left-right-right, or left-right-left. You don\'t notice, but the algorithm does.',
-    t2p2: '<strong>Long run.</strong> In 100 taps, the algorithm saw each pattern 1\u20133 times \u2014 you can get lucky. In 300, it has 5\u201315 observations per pattern, and luck runs out. That\'s the <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers" target="_blank">law of large numbers</a>.',
-    t2p3: 'The idea comes from <a href="https://en.wikipedia.org/wiki/Scott_Aaronson" target="_blank">Scott Aaronson</a>, a CS professor: the human brain is a bad random number generator. The same algorithms are used in data compression (ZIP). If a sequence is predictable \u2014 it\'s compressible.',
+    t2p1: 'Humans confuse randomness with alternation. "Left-right-left-right" feels random, but real randomness includes 4\u20135 identical in a row.',
+    t2li1: '<strong><a href="https://en.wikipedia.org/wiki/Gambler%27s_fallacy" target="_blank">Gambler\'s fallacy</a></strong> \u2014 after three "lefts" it feels like time for "right". A coin doesn\'t care.',
+    t2li2: '<strong>Streak avoidance</strong> \u2014 4 in a row feels non-random. But in 100 flips, a streak of 4+ is almost guaranteed.',
+    t2li3: '<strong>Rhythms</strong> \u2014 left-left-right-right. You don\'t notice, the algorithm does.',
+    t2random: '<strong>"But isn\'t the algorithm just guessing randomly?"</strong> No. If it guessed randomly, you\'d win \u2014 the economy favors you ($1.10 vs $1). If you\'re losing, it means it\'s guessing right more than 52% of the time. That\'s only possible if your taps are predictable.',
+    t2p2: '<strong>Long run.</strong> In 50 taps you can get lucky. By tap 120, the algorithm knows your habits. <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers" target="_blank">Law of large numbers</a>.',
+    t2p3: 'The idea comes from <a href="https://en.wikipedia.org/wiki/Scott_Aaronson" target="_blank">Scott Aaronson</a>: the brain is a bad random number generator. Same algorithms power data compression (ZIP): predictable = compressible.',
     t3title: 'The math',
-    t3p1: 'The algorithm is <a href="https://en.wikipedia.org/wiki/Prediction_by_partial_matching" target="_blank">Prediction by Partial Matching</a>: an ensemble of <a href="https://en.wikipedia.org/wiki/Markov_chain" target="_blank">Markov models</a> of different orders. For each order k, it keeps a context table and counts frequencies:',
-    t3formula: 'Context s = last k taps<br>C(s, 0) and C(s, 1) \u2014 counters<br><br>P(1|s) = (C(s,1) + 1) / (C(s,0) + C(s,1) + 2)<br><small>(<a href="https://en.wikipedia.org/wiki/Additive_smoothing" target="_blank">Laplace smoothing</a> \u2014 Bayesian prior Beta(1,1))</small><br><br>score += (P(1|s) \u2212 P(0|s)) \u00b7 \u221atotal \u00b7 (1 + k/2)<br><small>Higher k and more data = more weight</small>',
-    t3p2: 'Additional signals: global bias (overall tendency toward 0 or 1), alternation tendency, and momentum of the last 10 taps. Everything sums into one score, and the algorithm bets on the sign.',
-    t3p3: '<a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)" target="_blank">Entropy</a> of a random sequence = 1 bit/symbol. Human \u2248 0.7\u20130.9 bits. That gap is the algorithm\'s edge.',
+    t3p1: '<a href="https://en.wikipedia.org/wiki/Prediction_by_partial_matching" target="_blank">Prediction by Partial Matching</a> \u2014 an ensemble of <a href="https://en.wikipedia.org/wiki/Markov_chain" target="_blank">Markov models</a>:',
+    t3formula: 'Context s = last k taps<br>C(s, 0) and C(s, 1) \u2014 counters<br><br>P(1|s) = (C(s,1) + 1) / (C(s,0) + C(s,1) + 2)<br><small><a href="https://en.wikipedia.org/wiki/Additive_smoothing" target="_blank">Laplace</a>: prior Beta(1,1)</small><br><br>score += (P(1|s) \u2212 P(0|s)) \u00b7 \u221atotal \u00b7 (1 + k/2)',
+    t3p2: 'Plus: global bias, alternation tendency, momentum of last 10 taps.',
+    t3p3: '<a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)" target="_blank">Entropy</a> of random sequence = 1 bit. Human \u2248 0.7\u20130.9 bits. The gap is the algorithm\'s edge.',
     langSwitch: 'RU',
   },
 };
 
-let currentLang = (navigator.language || '').startsWith('en') ? 'en' : 'ru';
+let currentLang = 'ru';
 function T_get() { return LANG[currentLang]; }
 Object.defineProperty(window, 'T', { get: T_get });
 
 // ===== LEVELS =====
 const LEVELS = [
-  { id: 1, name: 'Уровень 1', presses: 100,  balance: 10, reward: 1.05, maxK: 3, label: 'УРОВЕНЬ 1', css: 'l1', stopMin: 20 },
-  { id: 2, name: 'Уровень 2', presses: 200,  balance: 10, reward: 1.05, maxK: 5, label: 'УРОВЕНЬ 2', css: 'l2', stopMin: 50 },
-  { id: 3, name: 'Уровень 3', presses: 300,  balance: 20, reward: 1.00, maxK: 8, label: 'УРОВЕНЬ 3', css: 'l3', stopMin: 80 },
+  { id: 1, presses: 50,  balance: 15, reward: 1.10, maxK: 3, css: 'l1', stopMin: 15 },
+  { id: 2, presses: 80,  balance: 15, reward: 1.10, maxK: 5, css: 'l2', stopMin: 25 },
+  { id: 3, presses: 120, balance: 15, reward: 1.10, maxK: 8, css: 'l3', stopMin: 40 },
 ];
 
 // ===== STATE =====
@@ -395,13 +414,14 @@ const state = {
   screen: 'welcome',
   level: 0,
   maxUnlocked: 0,
-  balance: 50.00,
-  initialBalance: 50.00,
+  balance: 15.00,
+  initialBalance: 15.00,
   balanceHistory: [],
   presses: [],
   predictions: [],
   correct: [],
   table: {},
+  currentMaxK: 3,
   totalPresses: 0,
   correctPredictions: 0,
   gameOver: false,
@@ -409,7 +429,7 @@ const state = {
   lastPressTime: 0,
 };
 
-const MIN_INTERVAL = 40;
+const MIN_INTERVAL = 20;
 const WARMUP = 3;
 
 // ===== SCREENS =====
@@ -418,10 +438,10 @@ function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === name));
 }
 
-// ===== INIT TABLE =====
-function initTable() {
-  const maxK = LEVELS[state.level].maxK;
+// ===== INIT / EXPAND TABLE =====
+function initTable(maxK) {
   state.table = {};
+  state.currentMaxK = maxK;
   for (let k = 1; k <= maxK; k++) {
     for (let i = 0; i < (1 << k); i++) {
       state.table[i.toString(2).padStart(k, '0')] = { 0: 0, 1: 0 };
@@ -429,11 +449,21 @@ function initTable() {
   }
 }
 
+function expandTable(newMaxK) {
+  for (let k = state.currentMaxK + 1; k <= newMaxK; k++) {
+    for (let i = 0; i < (1 << k); i++) {
+      const key = i.toString(2).padStart(k, '0');
+      if (!state.table[key]) state.table[key] = { 0: 0, 1: 0 };
+    }
+  }
+  state.currentMaxK = newMaxK;
+}
+
 // ===== PREDICTION (ensemble) =====
 function predict() {
   const n = state.presses.length;
   if (n < 1) return Math.random() < 0.5 ? 0 : 1;
-  const maxK = LEVELS[state.level].maxK;
+  const maxK = state.currentMaxK;
   let score = 0;
 
   for (let k = 1; k <= maxK; k++) {
@@ -475,8 +505,7 @@ function predict() {
 
 function updateTable(actual) {
   const n = state.presses.length;
-  const maxK = LEVELS[state.level].maxK;
-  for (let k = 1; k <= maxK; k++) {
+  for (let k = 1; k <= state.currentMaxK; k++) {
     if (n < k + 1) continue;
     const ctx = state.presses.slice(-(k+1), -1).join('');
     if (state.table[ctx]) state.table[ctx][actual]++;
@@ -495,7 +524,7 @@ function updateWater() {
 // ===== HUD =====
 function updateHUD() {
   const lvl = LEVELS[state.level];
-  document.getElementById('hudLevel').innerHTML = '<span class="level-badge ' + lvl.css + '">' + lvl.label + '</span>';
+  document.getElementById('hudLevel').innerHTML = '<span class="level-badge ' + lvl.css + '">' + T.level + ' ' + lvl.id + '</span>';
   document.getElementById('hudBalance').textContent = '$' + state.balance.toFixed(2);
   document.getElementById('hudCounter').textContent = state.totalPresses + '/' + lvl.presses;
   document.getElementById('btnStop').disabled = state.totalPresses < lvl.stopMin;
@@ -522,7 +551,6 @@ let activePointerId = null;
 
 function handlePress(choice, x, y, pointerId) {
   if (state.gameOver) return;
-  // Block multitouch: only one finger at a time
   if (activePointerId !== null && activePointerId !== pointerId) return;
   const now = Date.now();
   if (now - state.lastPressTime < MIN_INTERVAL) return;
@@ -585,13 +613,12 @@ function drawBalanceGraph(canvas, history, initial) {
 
   const all = [initial, ...history];
   const maxB = Math.max(...all, initial * 1.3);
-  const minB = Math.min(...all, initial * 0.5);
+  const minB = Math.min(...all, initial * 0.3);
   const range = maxB - minB || 1;
 
   function yOf(v) { return h - ((v - minB) / range) * (h - 8) - 4; }
   function xOf(i) { return (i / (all.length - 1)) * w; }
 
-  // Grid line at initial balance
   ctx.strokeStyle = '#333';
   ctx.lineWidth = 0.5;
   ctx.setLineDash([3, 3]);
@@ -601,13 +628,11 @@ function drawBalanceGraph(canvas, history, initial) {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Segment-by-segment: green above initial, red below
   for (let i = 1; i < all.length; i++) {
     const x0 = xOf(i - 1), y0 = yOf(all[i - 1]);
     const x1 = xOf(i), y1 = yOf(all[i]);
     const above = (all[i - 1] + all[i]) / 2 >= initial;
 
-    // Fill segment to baseline
     const yBase = yOf(initial);
     ctx.beginPath();
     ctx.moveTo(x0, y0);
@@ -618,7 +643,6 @@ function drawBalanceGraph(canvas, history, initial) {
     ctx.fillStyle = above ? 'rgba(0,255,136,0.15)' : 'rgba(255,34,68,0.12)';
     ctx.fill();
 
-    // Line segment
     ctx.beginPath();
     ctx.moveTo(x0, y0);
     ctx.lineTo(x1, y1);
@@ -638,8 +662,7 @@ function showResult() {
   const hasNext = state.level < LEVELS.length - 1;
 
   let title = '';
-  if (state.gameOverReason === 'bankrupt') title = T.bankrupt;
-  else if (won) title = T.won;
+  if (won) title = T.won;
   else if (pct >= 70) title = T.predictable70;
   else if (pct >= 60) title = T.predictable60;
   else if (pct >= 55) title = T.almost55;
@@ -670,8 +693,7 @@ function showResult() {
   let levelUpHTML = '';
   if (won && hasNext) {
     const nx = LEVELS[state.level + 1];
-    const rewardDesc = nx.reward === 1.00 ? ', ' + T.stakes + ' $1/$1' : '';
-    levelUpHTML = '<div class="result-level-up fade-item" style="animation-delay:350ms"><div class="level-up-title">' + T.unlocked + ' ' + nx.name + '!</div><div class="level-up-desc">' + nx.presses + ' ' + T.pressesWord + ', $' + nx.balance + ' ' + T.atStart + rewardDesc + '</div></div>';
+    levelUpHTML = '<div class="result-level-up fade-item" style="animation-delay:350ms"><div class="level-up-title">' + T.unlocked + ' ' + T.levelName + ' ' + nx.id + '!</div><div class="level-up-desc">' + nx.presses + ' ' + T.pressesWord + ', $' + nx.balance + ' ' + T.atStart + '</div></div>';
   } else if (won && !hasNext) {
     levelUpHTML = '<div class="result-level-up fade-item" style="animation-delay:350ms"><div class="level-up-title" style="color:#ff2244">' + T.allLevels + '</div><div class="level-up-desc">' + T.allLevelsDesc + '</div></div>';
   }
@@ -679,13 +701,13 @@ function showResult() {
   let btns = '';
   if (won && hasNext) {
     const nx = LEVELS[state.level + 1];
-    btns = '<button class="btn-next-level' + (nx.id===3?' final':'') + '" id="btnNextLevel">' + nx.name + ' &rarr;</button><button class="btn-secondary" id="btnRetry">' + T.replayLevel + '</button>';
+    btns = '<button class="btn-next-level' + (nx.id===3?' final':'') + '" id="btnNextLevel">' + T.levelName + ' ' + nx.id + ' &rarr;</button><button class="btn-secondary" id="btnRetry">' + T.replayLevel + '</button>';
   } else {
     btns = '<button class="btn-primary" id="btnRetry">' + T.retry + '</button>';
   }
 
   document.getElementById('result').innerHTML =
-    '<span class="level-badge ' + lvl.css + ' fade-item" style="animation-delay:0ms">' + lvl.label + '</span>' +
+    '<span class="level-badge ' + lvl.css + ' fade-item" style="animation-delay:0ms">' + T.level + ' ' + lvl.id + '</span>' +
     '<h2 class="fade-item" style="animation-delay:50ms">' + title + '</h2>' +
     '<div class="result-balance fade-item" style="animation-delay:100ms;color:' + balColor + '">$' + state.balance.toFixed(2) + '</div>' +
     '<div class="result-stats fade-item" style="animation-delay:150ms">' +
@@ -714,7 +736,6 @@ function showResult() {
 
   showScreen('result');
 
-  // Draw graph after screen is visible
   requestAnimationFrame(() => {
     const canvas = document.getElementById('balGraph');
     if (canvas && state.balanceHistory.length > 1) drawBalanceGraph(canvas, state.balanceHistory, state.initialBalance);
@@ -730,54 +751,39 @@ function showResult() {
   });
 }
 
-// ===== THEORY (single scroll page) =====
+// ===== THEORY =====
 function showTheory() {
   document.getElementById('theory').innerHTML =
     '<div class="theory-header"><h2>' + T.theoryTitle + '</h2><button class="btn-back" id="btnBackResult">&larr; ' + T.back + '</button></div>' +
     '<div class="theory-body" id="theoryBody">' +
 
-    // === PART 1: How it works step by step ===
     '<p class="theory-section-title">' + T.t1title + '</p>' +
-
     '<p>' + T.t1p1 + '</p>' +
-
     '<div class="example-box">' + T.t1ex1 + '</div>' +
-
     '<p>' + T.t1p2 + '</p>' +
-
     '<p>' + T.t1p3 + '</p>' +
-
-    '<div class="example-box">' + T.t1ex2 + '</div>' +
-
     '<p>' + T.t1p4 + '</p>' +
+    '<p>' + T.t1p5 + '</p>' +
 
     '<div style="text-align:center"><button class="btn-primary theory-play-btn" id="btnPlay1">' + T.playAgain + '</button></div>' +
 
-    // === PART 2: Why you lose ===
     '<hr class="theory-divider">' +
     '<p class="theory-section-title">' + T.t2title + '</p>' +
-
     '<p>' + T.t2p1 + '</p>' +
-
     '<ul>' +
     '<li>' + T.t2li1 + '</li>' +
     '<li>' + T.t2li2 + '</li>' +
     '<li>' + T.t2li3 + '</li>' +
     '</ul>' +
-
+    '<div class="example-box">' + T.t2random + '</div>' +
     '<p>' + T.t2p2 + '</p>' +
-
     '<p>' + T.t2p3 + '</p>' +
 
-    // === PART 3: Math ===
     '<hr class="theory-divider">' +
     '<p class="theory-section-title">' + T.t3title + '</p>' +
-
     '<p>' + T.t3p1 + '</p>' +
     '<div class="formula">' + T.t3formula + '</div>' +
-
     '<p>' + T.t3p2 + '</p>' +
-
     '<p>' + T.t3p3 + '</p>' +
 
     '<div style="text-align:center"><button class="btn-primary theory-play-btn" id="btnPlay2">' + T.playAgain + '</button></div>' +
@@ -794,12 +800,21 @@ function showTheory() {
 
 // ===== START GAME =====
 function startGame(levelIndex) {
+  const prevLevel = state.level;
   state.level = levelIndex || 0;
   const lvl = LEVELS[state.level];
+
+  // Carryover: if advancing to next level, expand table; otherwise reset
+  if (levelIndex > prevLevel && levelIndex > 0 && state.presses.length > 0) {
+    expandTable(lvl.maxK);
+  } else {
+    state.presses = [];
+    initTable(lvl.maxK);
+  }
+
   state.balance = lvl.balance;
   state.initialBalance = lvl.balance;
   state.balanceHistory = [lvl.balance];
-  state.presses = [];
   state.predictions = [];
   state.correct = [];
   state.totalPresses = 0;
@@ -807,7 +822,6 @@ function startGame(levelIndex) {
   state.gameOver = false;
   state.gameOverReason = '';
   state.lastPressTime = 0;
-  initTable();
   updateWater();
   updateHUD();
   document.getElementById('hudPredResult').className = 'hud-prediction-result';
@@ -854,20 +868,22 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ===== LANGUAGE =====
-function updateWelcomeText() {
+function updateAllText() {
   document.getElementById('welTitle').textContent = T.title;
   document.getElementById('welSubtitle').textContent = T.subtitle;
-  document.getElementById('welDesc').innerHTML = T.descLine1 + '<br><br>' + T.descLine2;
+  document.getElementById('welRules').innerHTML = T.rulesHTML;
   document.getElementById('btnStart').textContent = T.play;
   document.getElementById('btnLang').textContent = T.langSwitch;
   document.getElementById('btnStop').textContent = T.stop;
+  document.getElementById('welHint').textContent = T.hint;
+  document.getElementById('welFooter').innerHTML = '<a href="https://www.facebook.com/teo.spiro.2025" target="_blank">Teo Spiro</a>';
   document.title = T.title;
 }
-updateWelcomeText();
+updateAllText();
 
 document.getElementById('btnLang').addEventListener('click', () => {
   currentLang = currentLang === 'ru' ? 'en' : 'ru';
-  updateWelcomeText();
+  updateAllText();
 });
 
 try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('portrait').catch(()=>{}); } catch(e){}
