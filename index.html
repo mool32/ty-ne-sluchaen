@@ -885,16 +885,23 @@ function startGame(levelIndex) {
   state.level = levelIndex || 0;
   const lvl = LEVELS[state.level];
 
-  // Carryover: if advancing to next level, expand table + keep balance
-  if (levelIndex > prevLevel && levelIndex > 0 && state.presses.length > 0) {
+  // Algorithm memory (presses + table) persists for the ENTIRE session.
+  // Only balance resets on replay; it carries over when advancing.
+  if (Object.keys(state.table).length === 0) {
+    // Very first game of session: init table
+    initTable(lvl.maxK);
+  } else if (lvl.maxK > state.currentMaxK) {
+    // Need higher depth: expand, keep all existing data
     expandTable(lvl.maxK);
+  }
+  // state.presses is NEVER reset — algorithm remembers everything
+
+  // Balance: carry over when advancing, reset when replaying
+  if (levelIndex > prevLevel && levelIndex > 0 && state.presses.length > 0) {
     state.carryoverBalance = state.balance;
     state.initialBalance = state.balance;
     state.balanceHistory = [state.balance];
   } else {
-    // Fresh start or replay
-    state.presses = [];
-    initTable(lvl.maxK);
     state.balance = lvl.balance;
     state.initialBalance = lvl.balance;
     state.balanceHistory = [lvl.balance];
