@@ -25,6 +25,7 @@ function doPost(e) {
       sheet.appendRow([
         'Timestamp',
         'Session ID',
+        'Attempt #',
         'Level',
         'Total Presses',
         'Correct Predictions',
@@ -36,10 +37,16 @@ function doPost(e) {
         'Max Run',
         'Top Trigram',
         'Sequence',
+        'Timestamps (ms)',
+        'Acc Last 10',
+        'Acc Last 20',
+        'Carryover Balance',
+        'Device',
+        'Language',
         'User Agent'
       ]);
       // Bold headers
-      sheet.getRange(1, 1, 1, 14).setFontWeight('bold');
+      sheet.getRange(1, 1, 1, 21).setFontWeight('bold');
       // Freeze header row
       sheet.setFrozenRows(1);
     }
@@ -47,6 +54,7 @@ function doPost(e) {
     sheet.appendRow([
       new Date().toISOString(),
       data.sessionId || '',
+      data.attemptNumber || 0,
       data.level || '',
       data.totalPresses || 0,
       data.correctPredictions || 0,
@@ -58,6 +66,12 @@ function doPost(e) {
       data.maxRun || 0,
       data.topTrigram || '',
       data.sequence || '',
+      data.timestamps || '',
+      data.accLast10 || '',
+      data.accLast20 || '',
+      data.carryoverBalance !== null && data.carryoverBalance !== undefined ? data.carryoverBalance : '',
+      data.device || '',
+      data.lang || '',
       data.userAgent || ''
     ]);
 
@@ -75,6 +89,6 @@ function doPost(e) {
 // Handle GET requests (for testing)
 function doGet(e) {
   return ContentService
-    .createTextOutput(JSON.stringify({ status: 'ok', message: 'Stats endpoint is working' }))
+    .createTextOutput(JSON.stringify({ status: 'ok', message: 'Stats endpoint is working v2' }))
     .setMimeType(ContentService.MimeType.JSON);
 }

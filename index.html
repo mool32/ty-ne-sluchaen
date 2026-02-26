@@ -208,7 +208,9 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
 }
 .level-badge.l1 { border: 1px solid #00ff88; color: #00ff88; }
 .level-badge.l2 { border: 1px solid #ffcc00; color: #ffcc00; }
-.level-badge.l3 { border: 1px solid #ff2244; color: #ff2244; }
+.level-badge.l3 { border: 1px solid #ff8800; color: #ff8800; }
+.level-badge.l4 { border: 1px solid #ff2244; color: #ff2244; }
+.level-badge.l5 { border: 1px solid #cc44ff; color: #cc44ff; }
 
 .result-level-up {
   background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.3);
@@ -223,7 +225,7 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
   border-radius: 8px; cursor: pointer; transition: transform 100ms;
 }
 .btn-next-level:active { transform: scale(0.96); }
-.btn-next-level.final { background: #ff2244; color: #fff; }
+.btn-next-level.final { background: #cc44ff; color: #fff; }
 
 .fade-item { opacity: 0; transform: translateY(10px); animation: fade-up 300ms ease forwards; }
 @keyframes fade-up { to { opacity: 1; transform: translateY(0); } }
@@ -268,7 +270,7 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
       <div class="hud-balance" id="hudBalance">$15.00</div>
       <div class="hud-prediction-result" id="hudPredResult"></div>
     </div>
-    <div class="hud-bottom" id="hudCounter">0/50</div>
+    <div class="hud-bottom" id="hudCounter">0/40</div>
     <button class="btn-stop" id="btnStop" disabled></button>
   </div>
 
@@ -286,59 +288,62 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
 // ===== i18n =====
 const LANG = {
   ru: {
-    title: 'Ты не случаен',
-    subtitle: 'Попробуй обыграть алгоритм',
-    rulesHTML: 'Нажимай <strong>лево</strong> и <strong>право</strong> в случайном порядке.<br>Алгоритм предсказывает каждое нажатие.<br><br>Угадал \u2014 <span class="lose">ты теряешь $1</span><br>Не угадал \u2014 <span class="win">ты получаешь $1.10</span>',
-    play: 'Играть',
-    stop: 'Стоп',
-    hint: 'На компьютере: стрелки \u2190 \u2192',
-    level: 'УРОВЕНЬ',
-    levelName: 'Уровень',
-    won: 'Ты обыграл алгоритм!',
-    predictable70: 'Ты полностью предсказуем',
-    predictable60: 'Алгоритм читает тебя',
-    almost55: 'Почти, но не случайно',
-    impressive50: 'Впечатляюще!',
-    incredible: 'Невероятно!',
-    guessed: 'Угадано',
-    of: 'из',
-    leftRight: 'Лево/право',
-    graphLabel: 'Как менялся баланс',
-    yourPresses: 'Твои нажатия',
-    predictions: 'Предсказания алгоритма',
-    retry: 'Ещё раз',
-    replayLevel: 'Переиграть',
-    howItWorks: 'Как это работает?',
-    unlocked: 'Открыт',
-    pressesWord: 'нажатий',
-    atStart: 'на старте',
-    allLevels: 'Все уровни пройдены!',
-    allLevelsDesc: 'Ты прошёл все три уровня.',
-    theoryTitle: 'Как это работает?',
-    back: 'Назад',
-    playAgain: 'Играть снова',
-    author: 'Демонстрация',
+    title: '\u0422\u044b \u043d\u0435 \u0441\u043b\u0443\u0447\u0430\u0435\u043d',
+    subtitle: '\u041f\u043e\u043f\u0440\u043e\u0431\u0443\u0439 \u043e\u0431\u044b\u0433\u0440\u0430\u0442\u044c \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c',
+    rulesHTML: '\u041d\u0430\u0436\u0438\u043c\u0430\u0439 <strong>\u043b\u0435\u0432\u043e</strong> \u0438 <strong>\u043f\u0440\u0430\u0432\u043e</strong> \u0432 \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u043e\u043c \u043f\u043e\u0440\u044f\u0434\u043a\u0435.<br>\u0410\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u043f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u043a\u0430\u0436\u0434\u043e\u0435 \u043d\u0430\u0436\u0430\u0442\u0438\u0435.<br><br>\u0423\u0433\u0430\u0434\u0430\u043b \u2014 <span class="lose">\u0442\u044b \u0442\u0435\u0440\u044f\u0435\u0448\u044c $1</span><br>\u041d\u0435 \u0443\u0433\u0430\u0434\u0430\u043b \u2014 <span class="win">\u0442\u044b \u043f\u043e\u043b\u0443\u0447\u0430\u0435\u0448\u044c $1.10</span>',
+    play: '\u0418\u0433\u0440\u0430\u0442\u044c',
+    stop: '\u0421\u0442\u043e\u043f',
+    hint: '\u041d\u0430 \u043a\u043e\u043c\u043f\u044c\u044e\u0442\u0435\u0440\u0435: \u0441\u0442\u0440\u0435\u043b\u043a\u0438 \u2190 \u2192',
+    level: '\u0423\u0420\u041e\u0412\u0415\u041d\u042c',
+    levelName: '\u0423\u0440\u043e\u0432\u0435\u043d\u044c',
+    won: '\u0422\u044b \u043e\u0431\u044b\u0433\u0440\u0430\u043b \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c!',
+    wonBarely: '\u041f\u043e\u0431\u0435\u0434\u0430 \u043d\u0430 \u0433\u0440\u0430\u043d\u0438!',
+    predictable70: '\u0422\u044b \u043f\u043e\u043b\u043d\u043e\u0441\u0442\u044c\u044e \u043f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u0443\u0435\u043c',
+    predictable60: '\u0410\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u0447\u0438\u0442\u0430\u0435\u0442 \u0442\u0435\u0431\u044f',
+    almost55: '\u041f\u043e\u0447\u0442\u0438, \u043d\u043e \u043d\u0435 \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u043e',
+    lostSoClose: '\u0422\u0430\u043a \u0431\u043b\u0438\u0437\u043a\u043e!',
+    impressive50: '\u0412\u043f\u0435\u0447\u0430\u0442\u043b\u044f\u044e\u0449\u0435!',
+    incredible: '\u041d\u0435\u0432\u0435\u0440\u043e\u044f\u0442\u043d\u043e!',
+    guessed: '\u0423\u0433\u0430\u0434\u0430\u043d\u043e',
+    of: '\u0438\u0437',
+    leftRight: '\u041b\u0435\u0432\u043e/\u043f\u0440\u0430\u0432\u043e',
+    graphLabel: '\u041a\u0430\u043a \u043c\u0435\u043d\u044f\u043b\u0441\u044f \u0431\u0430\u043b\u0430\u043d\u0441',
+    yourPresses: '\u0422\u0432\u043e\u0438 \u043d\u0430\u0436\u0430\u0442\u0438\u044f',
+    predictions: '\u041f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u0430\u043d\u0438\u044f \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c\u0430',
+    retry: '\u0415\u0449\u0451 \u0440\u0430\u0437',
+    replayLevel: '\u041f\u0435\u0440\u0435\u0438\u0433\u0440\u0430\u0442\u044c',
+    howItWorks: '\u041a\u0430\u043a \u044d\u0442\u043e \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442?',
+    unlocked: '\u041e\u0442\u043a\u0440\u044b\u0442',
+    pressesWord: '\u043d\u0430\u0436\u0430\u0442\u0438\u0439',
+    atStart: '\u043d\u0430 \u0441\u0442\u0430\u0440\u0442\u0435',
+    allLevels: '\u0412\u0441\u0435 \u0443\u0440\u043e\u0432\u043d\u0438 \u043f\u0440\u043e\u0439\u0434\u0435\u043d\u044b!',
+    allLevelsDesc: '\u0422\u044b \u043f\u0440\u043e\u0448\u0451\u043b \u0432\u0441\u0435 \u043f\u044f\u0442\u044c \u0443\u0440\u043e\u0432\u043d\u0435\u0439.',
+    finalBalance: '\u0424\u0438\u043d\u0430\u043b\u044c\u043d\u044b\u0439 \u0431\u0430\u043b\u0430\u043d\u0441',
+    theoryTitle: '\u041a\u0430\u043a \u044d\u0442\u043e \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442?',
+    back: '\u041d\u0430\u0437\u0430\u0434',
+    playAgain: '\u0418\u0433\u0440\u0430\u0442\u044c \u0441\u043d\u043e\u0432\u0430',
+    author: '\u0414\u0435\u043c\u043e\u043d\u0441\u0442\u0440\u0430\u0446\u0438\u044f',
     // theory
-    t1title: 'Шаг за шагом',
-    t1p1: 'Алгоритм записывает каждое нажатие. После 10 нажатий: <strong>Л П Л Л П Л П П Л П</strong>. Он ищет в этой записи закономерности.',
-    t1ex1: '<strong>Пример.</strong> Ты три раза нажал «лево-право» и каждый раз потом нажал «лево». Алгоритм запомнил. Следующий раз после «лево-право» \u2014 он ставит на «лево».',
-    t1p2: 'Для каждой комбинации последних нажатий алгоритм считает: сколько раз после неё было «лево», сколько «право». Чем больше данных \u2014 тем точнее.',
-    t1p3: 'Одновременно работают <strong>несколько моделей разной глубины</strong>. На уровне 1 \u2014 до 3 нажатий назад. На уровне 2 \u2014 до 5. На уровне 3 \u2014 до 8. Все голосуют, побеждает большинство.',
-    t1p4: '<strong>Память между уровнями.</strong> Алгоритм не сбрасывается. Всё, что он узнал о тебе на первом уровне, он использует на втором и третьем. Чем дольше играешь \u2014 тем лучше он тебя знает.',
-    t1p5: '<strong>Экономика.</strong> За промах алгоритм платит $1.10, за угадывание забирает $1. Если бы ты был идеально случайным \u2014 ты бы зарабатывал. Но алгоритм угадывает больше 50%, и этого хватает.',
-    t2title: 'Почему ты проигрываешь',
-    t2p1: 'Люди путают случайность с чередованием. «Лево-право-лево-право» кажется случайным, но настоящая случайность \u2014 это когда бывает 4\u20135 одинаковых подряд.',
-    t2li1: '<strong><a href="https://en.wikipedia.org/wiki/Gambler%27s_fallacy" target="_blank">Заблуждение игрока</a></strong> \u2014 после трёх «лево» кажется, что пора нажать «право». Монетке всё равно.',
-    t2li2: '<strong>Страх серий</strong> \u2014 4 подряд кажутся неслучайными. Но при 100 бросках серия 4+ почти гарантирована.',
-    t2li3: '<strong>Ритмы</strong> \u2014 лево-лево-право-право. Ты не замечаешь, алгоритм видит.',
-    t2random: '<strong>«А может алгоритм просто угадывает случайно?»</strong> Нет. Если бы он ставил наугад, ты бы выигрывал \u2014 экономика в твою пользу ($1.10 против $1). Если ты проигрываешь \u2014 значит, он угадывает чаще 52%. А это возможно только если твои нажатия предсказуемы.',
-    t2p2: '<strong>Длинная дистанция.</strong> На 50 нажатиях можно повезти. К 120-му алгоритм уже знает твои привычки. <a href="https://ru.wikipedia.org/wiki/Закон_больших_чисел" target="_blank">Закон больших чисел</a>.',
-    t2p3: 'Идею придумал <a href="https://en.wikipedia.org/wiki/Scott_Aaronson" target="_blank">Скотт Ааронсон</a>: мозг \u2014 плохой генератор случайных чисел. Те же алгоритмы работают в сжатии данных (ZIP): предсказуемое = сжимаемое.',
-    t3title: 'Математика',
-    t3p1: '<a href="https://en.wikipedia.org/wiki/Prediction_by_partial_matching" target="_blank">Prediction by Partial Matching</a> \u2014 ансамбль <a href="https://ru.wikipedia.org/wiki/Цепь_Маркова" target="_blank">марковских моделей</a>:',
-    t3formula: 'Контекст s = последние k нажатий<br>C(s, 0) и C(s, 1) \u2014 счётчики<br><br>P(1|s) = (C(s,1) + 1) / (C(s,0) + C(s,1) + 2)<br><small><a href="https://ru.wikipedia.org/wiki/Сглаживание_Лапласа" target="_blank">Лаплас</a>: приор Beta(1,1)</small><br><br>score += (P(1|s) \u2212 P(0|s)) \u00b7 \u221atotal \u00b7 (1 + k/2)',
-    t3p2: 'Плюс: глобальный bias, тенденция к чередованию, momentum последних 10 нажатий.',
-    t3p3: '<a href="https://ru.wikipedia.org/wiki/Информационная_энтропия" target="_blank">Энтропия</a> случайной последовательности = 1 бит. Человеческая \u2248 0.7\u20130.9 бит. Разница \u2014 преимущество алгоритма.',
+    t1title: '\u0428\u0430\u0433 \u0437\u0430 \u0448\u0430\u0433\u043e\u043c',
+    t1p1: '\u0410\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u0437\u0430\u043f\u0438\u0441\u044b\u0432\u0430\u0435\u0442 \u043a\u0430\u0436\u0434\u043e\u0435 \u043d\u0430\u0436\u0430\u0442\u0438\u0435. \u041f\u043e\u0441\u043b\u0435 10: <strong>\u041b \u041f \u041b \u041b \u041f \u041b \u041f \u041f \u041b \u041f</strong>. \u041e\u043d \u0438\u0449\u0435\u0442 \u0437\u0430\u043a\u043e\u043d\u043e\u043c\u0435\u0440\u043d\u043e\u0441\u0442\u0438.',
+    t1ex1: '<strong>\u041f\u0440\u0438\u043c\u0435\u0440.</strong> \u0422\u044b \u0442\u0440\u0438 \u0440\u0430\u0437\u0430 \u043d\u0430\u0436\u0430\u043b \u00ab\u043b\u0435\u0432\u043e-\u043f\u0440\u0430\u0432\u043e\u00bb \u0438 \u043a\u0430\u0436\u0434\u044b\u0439 \u0440\u0430\u0437 \u043f\u043e\u0442\u043e\u043c \u2014 \u00ab\u043b\u0435\u0432\u043e\u00bb. \u0410\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u0437\u0430\u043f\u043e\u043c\u043d\u0438\u043b. \u0421\u043b\u0435\u0434\u0443\u044e\u0449\u0438\u0439 \u0440\u0430\u0437 \u043f\u043e\u0441\u043b\u0435 \u00ab\u043b\u0435\u0432\u043e-\u043f\u0440\u0430\u0432\u043e\u00bb \u2014 \u043e\u043d \u0441\u0442\u0430\u0432\u0438\u0442 \u043d\u0430 \u00ab\u043b\u0435\u0432\u043e\u00bb.',
+    t1p2: '\u0414\u043b\u044f \u043a\u0430\u0436\u0434\u043e\u0439 \u043a\u043e\u043c\u0431\u0438\u043d\u0430\u0446\u0438\u0438 \u043f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0445 \u043d\u0430\u0436\u0430\u0442\u0438\u0439 \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u0441\u0447\u0438\u0442\u0430\u0435\u0442: \u0441\u043a\u043e\u043b\u044c\u043a\u043e \u0440\u0430\u0437 \u043f\u043e\u0441\u043b\u0435 \u043d\u0435\u0451 \u0431\u044b\u043b\u043e \u00ab\u043b\u0435\u0432\u043e\u00bb, \u0441\u043a\u043e\u043b\u044c\u043a\u043e \u00ab\u043f\u0440\u0430\u0432\u043e\u00bb. \u0427\u0435\u043c \u0431\u043e\u043b\u044c\u0448\u0435 \u0434\u0430\u043d\u043d\u044b\u0445 \u2014 \u0442\u0435\u043c \u0442\u043e\u0447\u043d\u0435\u0435.',
+    t1p3: '\u041e\u0434\u043d\u043e\u0432\u0440\u0435\u043c\u0435\u043d\u043d\u043e \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0442 <strong>\u043d\u0435\u0441\u043a\u043e\u043b\u044c\u043a\u043e \u043c\u043e\u0434\u0435\u043b\u0435\u0439 \u0440\u0430\u0437\u043d\u043e\u0439 \u0433\u043b\u0443\u0431\u0438\u043d\u044b</strong>. \u0423\u0440\u043e\u0432\u0435\u043d\u044c 1 \u2014 \u0434\u043e 3 \u043d\u0430\u0436\u0430\u0442\u0438\u0439 \u043d\u0430\u0437\u0430\u0434. \u0423\u0440\u043e\u0432\u0435\u043d\u044c 2 \u2014 \u0434\u043e 4. \u0423\u0440\u043e\u0432\u0435\u043d\u044c 3 \u2014 \u0434\u043e 5. \u041a \u0443\u0440\u043e\u0432\u043d\u044e 5 \u2014 \u0434\u043e 7. \u0412\u0441\u0435 \u00ab\u0433\u043e\u043b\u043e\u0441\u0443\u044e\u0442\u00bb, \u043f\u043e\u0431\u0435\u0436\u0434\u0430\u0435\u0442 \u043a\u043e\u043d\u0441\u0435\u043d\u0441\u0443\u0441.',
+    t1p4: '<strong>\u041d\u0435\u043f\u0440\u0435\u0440\u044b\u0432\u043d\u044b\u0439 \u044d\u043a\u0441\u043f\u0435\u0440\u0438\u043c\u0435\u043d\u0442.</strong> \u0411\u0430\u043b\u0430\u043d\u0441 \u0438 \u043f\u0430\u043c\u044f\u0442\u044c \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c\u0430 \u043f\u0435\u0440\u0435\u043d\u043e\u0441\u044f\u0442\u0441\u044f \u043c\u0435\u0436\u0434\u0443 \u0443\u0440\u043e\u0432\u043d\u044f\u043c\u0438. \u0417\u0430\u043a\u043e\u043d\u0447\u0438\u043b \u0443\u0440\u043e\u0432\u0435\u043d\u044c 1 \u0441 $18 \u2014 \u043d\u0430\u0447\u0438\u043d\u0430\u0435\u0448\u044c \u0443\u0440\u043e\u0432\u0435\u043d\u044c 2 \u0441 $18. \u041d\u043e \u0438 \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u043f\u043e\u043c\u043d\u0438\u0442 \u0432\u0441\u0435 \u0442\u0432\u043e\u0438 \u043f\u0440\u0438\u0432\u044b\u0447\u043a\u0438.',
+    t1p5: '<strong>\u042d\u043a\u043e\u043d\u043e\u043c\u0438\u043a\u0430.</strong> \u0417\u0430 \u043f\u0440\u043e\u043c\u0430\u0445 \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u043f\u043b\u0430\u0442\u0438\u0442 $1.10, \u0437\u0430 \u0443\u0433\u0430\u0434\u044b\u0432\u0430\u043d\u0438\u0435 \u0437\u0430\u0431\u0438\u0440\u0430\u0435\u0442 $1. \u0415\u0441\u043b\u0438 \u0431\u044b \u0442\u044b \u0431\u044b\u043b \u0438\u0434\u0435\u0430\u043b\u044c\u043d\u043e \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u043c \u2014 \u0442\u044b \u0431\u044b \u0437\u0430\u0440\u0430\u0431\u0430\u0442\u044b\u0432\u0430\u043b. \u041d\u043e \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u0443\u0433\u0430\u0434\u044b\u0432\u0430\u0435\u0442 \u0431\u043e\u043b\u044c\u0448\u0435 52%, \u0438 \u044d\u0442\u043e\u0433\u043e \u0445\u0432\u0430\u0442\u0430\u0435\u0442.',
+    t2title: '\u041f\u043e\u0447\u0435\u043c\u0443 \u0442\u044b \u043f\u0440\u043e\u0438\u0433\u0440\u044b\u0432\u0430\u0435\u0448\u044c',
+    t2p1: '\u041b\u044e\u0434\u0438 \u043f\u0443\u0442\u0430\u044e\u0442 \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u043e\u0441\u0442\u044c \u0441 \u0447\u0435\u0440\u0435\u0434\u043e\u0432\u0430\u043d\u0438\u0435\u043c. \u00ab\u041b\u0435\u0432\u043e-\u043f\u0440\u0430\u0432\u043e-\u043b\u0435\u0432\u043e-\u043f\u0440\u0430\u0432\u043e\u00bb \u043a\u0430\u0436\u0435\u0442\u0441\u044f \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u043c, \u043d\u043e \u043d\u0430\u0441\u0442\u043e\u044f\u0449\u0430\u044f \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u043e\u0441\u0442\u044c \u2014 \u044d\u0442\u043e \u043a\u043e\u0433\u0434\u0430 \u0431\u044b\u0432\u0430\u0435\u0442 4\u20135 \u043e\u0434\u0438\u043d\u0430\u043a\u043e\u0432\u044b\u0445 \u043f\u043e\u0434\u0440\u044f\u0434.',
+    t2li1: '<strong><a href="https://en.wikipedia.org/wiki/Gambler%27s_fallacy" target="_blank">\u0417\u0430\u0431\u043b\u0443\u0436\u0434\u0435\u043d\u0438\u0435 \u0438\u0433\u0440\u043e\u043a\u0430</a></strong> \u2014 \u043f\u043e\u0441\u043b\u0435 \u0442\u0440\u0451\u0445 \u00ab\u043b\u0435\u0432\u043e\u00bb \u043a\u0430\u0436\u0435\u0442\u0441\u044f, \u0447\u0442\u043e \u043f\u043e\u0440\u0430 \u043d\u0430\u0436\u0430\u0442\u044c \u00ab\u043f\u0440\u0430\u0432\u043e\u00bb. \u041c\u043e\u043d\u0435\u0442\u043a\u0435 \u0432\u0441\u0451 \u0440\u0430\u0432\u043d\u043e.',
+    t2li2: '<strong>\u0421\u0442\u0440\u0430\u0445 \u0441\u0435\u0440\u0438\u0439</strong> \u2014 4 \u043f\u043e\u0434\u0440\u044f\u0434 \u043a\u0430\u0436\u0443\u0442\u0441\u044f \u043d\u0435\u0441\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u043c\u0438. \u041d\u043e \u043f\u0440\u0438 100 \u0431\u0440\u043e\u0441\u043a\u0430\u0445 \u0441\u0435\u0440\u0438\u044f 4+ \u043f\u043e\u0447\u0442\u0438 \u0433\u0430\u0440\u0430\u043d\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0430.',
+    t2li3: '<strong>\u0420\u0438\u0442\u043c\u044b</strong> \u2014 \u043b\u0435\u0432\u043e-\u043b\u0435\u0432\u043e-\u043f\u0440\u0430\u0432\u043e-\u043f\u0440\u0430\u0432\u043e. \u0422\u044b \u043d\u0435 \u0437\u0430\u043c\u0435\u0447\u0430\u0435\u0448\u044c, \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u0432\u0438\u0434\u0438\u0442.',
+    t2random: '<strong>\u00ab\u0410 \u043c\u043e\u0436\u0435\u0442 \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u043f\u0440\u043e\u0441\u0442\u043e \u0443\u0433\u0430\u0434\u044b\u0432\u0430\u0435\u0442 \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u043e?\u00bb</strong> \u041d\u0435\u0442. \u0415\u0441\u043b\u0438 \u0431\u044b \u043e\u043d \u0441\u0442\u0430\u0432\u0438\u043b \u043d\u0430\u0443\u0433\u0430\u0434, \u0442\u044b \u0431\u044b \u0432\u044b\u0438\u0433\u0440\u044b\u0432\u0430\u043b \u2014 \u044d\u043a\u043e\u043d\u043e\u043c\u0438\u043a\u0430 \u0432 \u0442\u0432\u043e\u044e \u043f\u043e\u043b\u044c\u0437\u0443 ($1.10 \u043f\u0440\u043e\u0442\u0438\u0432 $1). \u0415\u0441\u043b\u0438 \u0442\u044b \u043f\u0440\u043e\u0438\u0433\u0440\u044b\u0432\u0430\u0435\u0448\u044c \u2014 \u0437\u043d\u0430\u0447\u0438\u0442, \u043e\u043d \u0443\u0433\u0430\u0434\u044b\u0432\u0430\u0435\u0442 \u0447\u0430\u0449\u0435 52%. \u0410 \u044d\u0442\u043e \u0432\u043e\u0437\u043c\u043e\u0436\u043d\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u0435\u0441\u043b\u0438 \u0442\u0432\u043e\u0438 \u043d\u0430\u0436\u0430\u0442\u0438\u044f \u043f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u0443\u0435\u043c\u044b.',
+    t2p2: '<strong>\u0414\u043b\u0438\u043d\u043d\u0430\u044f \u0434\u0438\u0441\u0442\u0430\u043d\u0446\u0438\u044f.</strong> \u041d\u0430 \u0443\u0440\u043e\u0432\u043d\u0435 1 (40 \u043d\u0430\u0436\u0430\u0442\u0438\u0439) \u043c\u043e\u0436\u043d\u043e \u043f\u043e\u0432\u0435\u0437\u0442\u0438. \u041a \u0443\u0440\u043e\u0432\u043d\u044e 5 (120 \u043d\u0430\u0436\u0430\u0442\u0438\u0439) \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c \u0443\u0436\u0435 \u0437\u043d\u0430\u0435\u0442 \u0432\u0441\u0435 \u0442\u0432\u043e\u0438 \u043f\u0440\u0438\u0432\u044b\u0447\u043a\u0438. <a href="https://ru.wikipedia.org/wiki/\u0417\u0430\u043a\u043e\u043d_\u0431\u043e\u043b\u044c\u0448\u0438\u0445_\u0447\u0438\u0441\u0435\u043b" target="_blank">\u0417\u0430\u043a\u043e\u043d \u0431\u043e\u043b\u044c\u0448\u0438\u0445 \u0447\u0438\u0441\u0435\u043b</a>.',
+    t2p3: '\u0418\u0434\u0435\u044e \u043f\u0440\u0438\u0434\u0443\u043c\u0430\u043b <a href="https://en.wikipedia.org/wiki/Scott_Aaronson" target="_blank">\u0421\u043a\u043e\u0442\u0442 \u0410\u0430\u0440\u043e\u043d\u0441\u043e\u043d</a>: \u043c\u043e\u0437\u0433 \u2014 \u043f\u043b\u043e\u0445\u043e\u0439 \u0433\u0435\u043d\u0435\u0440\u0430\u0442\u043e\u0440 \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0445 \u0447\u0438\u0441\u0435\u043b. \u0422\u0435 \u0436\u0435 \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c\u044b \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0442 \u0432 \u0441\u0436\u0430\u0442\u0438\u0438 \u0434\u0430\u043d\u043d\u044b\u0445 (ZIP): \u043f\u0440\u0435\u0434\u0441\u043a\u0430\u0437\u0443\u0435\u043c\u043e\u0435 = \u0441\u0436\u0438\u043c\u0430\u0435\u043c\u043e\u0435.',
+    t3title: '\u041c\u0430\u0442\u0435\u043c\u0430\u0442\u0438\u043a\u0430',
+    t3p1: '<a href="https://en.wikipedia.org/wiki/Prediction_by_partial_matching" target="_blank">Prediction by Partial Matching</a> \u2014 \u0430\u043d\u0441\u0430\u043c\u0431\u043b\u044c <a href="https://ru.wikipedia.org/wiki/\u0426\u0435\u043f\u044c_\u041c\u0430\u0440\u043a\u043e\u0432\u0430" target="_blank">\u043c\u0430\u0440\u043a\u043e\u0432\u0441\u043a\u0438\u0445 \u043c\u043e\u0434\u0435\u043b\u0435\u0439</a>:',
+    t3formula: '\u041a\u043e\u043d\u0442\u0435\u043a\u0441\u0442 s = \u043f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0435 k \u043d\u0430\u0436\u0430\u0442\u0438\u0439<br>C(s, 0) \u0438 C(s, 1) \u2014 \u0441\u0447\u0451\u0442\u0447\u0438\u043a\u0438<br><br>P(1|s) = (C(s,1) + 1) / (C(s,0) + C(s,1) + 2)<br><small><a href="https://ru.wikipedia.org/wiki/\u0421\u0433\u043b\u0430\u0436\u0438\u0432\u0430\u043d\u0438\u0435_\u041b\u0430\u043f\u043b\u0430\u0441\u0430" target="_blank">\u041b\u0430\u043f\u043b\u0430\u0441</a>: \u043f\u0440\u0438\u043e\u0440 Beta(1,1)</small><br><br>score += (P(1|s) \u2212 P(0|s)) \u00b7 \u221atotal \u00b7 (1 + k/2)',
+    t3p2: '\u041f\u043b\u044e\u0441: \u0433\u043b\u043e\u0431\u0430\u043b\u044c\u043d\u044b\u0439 bias, \u0442\u0435\u043d\u0434\u0435\u043d\u0446\u0438\u044f \u043a \u0447\u0435\u0440\u0435\u0434\u043e\u0432\u0430\u043d\u0438\u044e, momentum \u043f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0445 10 \u043d\u0430\u0436\u0430\u0442\u0438\u0439.',
+    t3p3: '<a href="https://ru.wikipedia.org/wiki/\u0418\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u043e\u043d\u043d\u0430\u044f_\u044d\u043d\u0442\u0440\u043e\u043f\u0438\u044f" target="_blank">\u042d\u043d\u0442\u0440\u043e\u043f\u0438\u044f</a> \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u043e\u0439 \u043f\u043e\u0441\u043b\u0435\u0434\u043e\u0432\u0430\u0442\u0435\u043b\u044c\u043d\u043e\u0441\u0442\u0438 = 1 \u0431\u0438\u0442. \u0427\u0435\u043b\u043e\u0432\u0435\u0447\u0435\u0441\u043a\u0430\u044f \u2248 0.7\u20130.9 \u0431\u0438\u0442. \u0420\u0430\u0437\u043d\u0438\u0446\u0430 \u2014 \u043f\u0440\u0435\u0438\u043c\u0443\u0449\u0435\u0441\u0442\u0432\u043e \u0430\u043b\u0433\u043e\u0440\u0438\u0442\u043c\u0430.',
     langSwitch: 'EN',
   },
   en: {
@@ -351,9 +356,11 @@ const LANG = {
     level: 'LEVEL',
     levelName: 'Level',
     won: 'You beat the algorithm!',
+    wonBarely: 'Won \u2014 barely!',
     predictable70: 'Completely predictable',
     predictable60: 'The algorithm reads you',
     almost55: 'Close, but not random',
+    lostSoClose: 'So close!',
     impressive50: 'Impressive!',
     incredible: 'Incredible!',
     guessed: 'Guessed',
@@ -369,7 +376,8 @@ const LANG = {
     pressesWord: 'taps',
     atStart: 'start',
     allLevels: 'All levels completed!',
-    allLevelsDesc: 'You beat all three levels.',
+    allLevelsDesc: 'You beat all five levels.',
+    finalBalance: 'Final balance',
     theoryTitle: 'How does it work?',
     back: 'Back',
     playAgain: 'Play again',
@@ -378,16 +386,16 @@ const LANG = {
     t1p1: 'The algorithm records every tap. After 10: <strong>L R L L R L R R L R</strong>. It searches for patterns.',
     t1ex1: '<strong>Example.</strong> You tapped "left-right" three times and each time followed with "left". The algorithm remembered. Next "left-right" \u2014 it bets "left".',
     t1p2: 'For every combination of recent taps, it counts how often "left" or "right" followed. More data = better predictions.',
-    t1p3: '<strong>Multiple models run simultaneously</strong> at different depths. Level 1: up to 3 taps back. Level 2: up to 5. Level 3: up to 8. They all vote.',
-    t1p4: '<strong>Memory across levels.</strong> The algorithm doesn\'t reset. Everything it learned about you on level 1 carries into levels 2 and 3. The longer you play, the better it knows you.',
-    t1p5: '<strong>Economy.</strong> The algorithm pays $1.10 for each miss and takes $1 for each correct guess. If you were perfectly random, you\'d profit. But it guesses right more than 50%, and that\'s enough.',
+    t1p3: '<strong>Multiple models run simultaneously</strong> at different depths. Level 1: up to 3 taps back. Level 2: up to 4. Level 3: up to 5. By level 5: up to 7. They all vote, consensus wins.',
+    t1p4: '<strong>One continuous experiment.</strong> Your balance and algorithm memory carry across levels. Finish level 1 with $18 \u2014 you start level 2 with $18. But the algorithm remembers all your habits too.',
+    t1p5: '<strong>Economy.</strong> The algorithm pays $1.10 for each miss and takes $1 for each correct guess. If you were perfectly random, you\'d profit. But it guesses right more than 52%, and that\'s enough.',
     t2title: 'Why you lose',
     t2p1: 'Humans confuse randomness with alternation. "Left-right-left-right" feels random, but real randomness includes 4\u20135 identical in a row.',
     t2li1: '<strong><a href="https://en.wikipedia.org/wiki/Gambler%27s_fallacy" target="_blank">Gambler\'s fallacy</a></strong> \u2014 after three "lefts" it feels like time for "right". A coin doesn\'t care.',
     t2li2: '<strong>Streak avoidance</strong> \u2014 4 in a row feels non-random. But in 100 flips, a streak of 4+ is almost guaranteed.',
     t2li3: '<strong>Rhythms</strong> \u2014 left-left-right-right. You don\'t notice, the algorithm does.',
     t2random: '<strong>"But isn\'t the algorithm just guessing randomly?"</strong> No. If it guessed randomly, you\'d win \u2014 the economy favors you ($1.10 vs $1). If you\'re losing, it means it\'s guessing right more than 52% of the time. That\'s only possible if your taps are predictable.',
-    t2p2: '<strong>Long run.</strong> In 50 taps you can get lucky. By tap 120, the algorithm knows your habits. <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers" target="_blank">Law of large numbers</a>.',
+    t2p2: '<strong>Long run.</strong> On level 1 (40 taps) you can get lucky. By level 5 (120 taps) the algorithm knows your habits. <a href="https://en.wikipedia.org/wiki/Law_of_large_numbers" target="_blank">Law of large numbers</a>.',
     t2p3: 'The idea comes from <a href="https://en.wikipedia.org/wiki/Scott_Aaronson" target="_blank">Scott Aaronson</a>: the brain is a bad random number generator. Same algorithms power data compression (ZIP): predictable = compressible.',
     t3title: 'The math',
     t3p1: '<a href="https://en.wikipedia.org/wiki/Prediction_by_partial_matching" target="_blank">Prediction by Partial Matching</a> \u2014 an ensemble of <a href="https://en.wikipedia.org/wiki/Markov_chain" target="_blank">Markov models</a>:',
@@ -402,11 +410,13 @@ let currentLang = 'ru';
 function T_get() { return LANG[currentLang]; }
 Object.defineProperty(window, 'T', { get: T_get });
 
-// ===== LEVELS =====
+// ===== LEVELS (5 levels, increasing depth) =====
 const LEVELS = [
-  { id: 1, presses: 50,  balance: 15, reward: 1.10, maxK: 3, css: 'l1', stopMin: 15 },
-  { id: 2, presses: 80,  balance: 15, reward: 1.10, maxK: 5, css: 'l2', stopMin: 25 },
-  { id: 3, presses: 120, balance: 15, reward: 1.10, maxK: 8, css: 'l3', stopMin: 40 },
+  { id: 1, presses: 40,  balance: 15, reward: 1.10, maxK: 3, css: 'l1', stopMin: 12 },
+  { id: 2, presses: 60,  balance: 15, reward: 1.10, maxK: 4, css: 'l2', stopMin: 18 },
+  { id: 3, presses: 80,  balance: 15, reward: 1.10, maxK: 5, css: 'l3', stopMin: 25 },
+  { id: 4, presses: 100, balance: 15, reward: 1.10, maxK: 6, css: 'l4', stopMin: 30 },
+  { id: 5, presses: 120, balance: 15, reward: 1.10, maxK: 7, css: 'l5', stopMin: 40 },
 ];
 
 // ===== STATE =====
@@ -416,6 +426,7 @@ const state = {
   maxUnlocked: 0,
   balance: 15.00,
   initialBalance: 15.00,
+  carryoverBalance: null,
   balanceHistory: [],
   presses: [],
   predictions: [],
@@ -427,6 +438,8 @@ const state = {
   gameOver: false,
   gameOverReason: '',
   lastPressTime: 0,
+  gameStartTime: 0,
+  timestamps: [],
 };
 
 const MIN_INTERVAL = 20;
@@ -556,6 +569,9 @@ function handlePress(choice, x, y, pointerId) {
   if (now - state.lastPressTime < MIN_INTERVAL) return;
   state.lastPressTime = now;
 
+  // Track timestamp relative to game start
+  state.timestamps.push(now - state.gameStartTime);
+
   createRipple(x, y);
   if (navigator.vibrate) navigator.vibrate(10);
 
@@ -596,6 +612,44 @@ function getSessionId() {
     localStorage.setItem('tns_session', id);
   }
   return id;
+}
+
+function getAttemptNumber() {
+  let n = parseInt(localStorage.getItem('tns_attempt') || '0');
+  n++;
+  localStorage.setItem('tns_attempt', n.toString());
+  return n;
+}
+
+function getDeviceType() {
+  const ua = navigator.userAgent;
+  if (/Tablet|iPad/i.test(ua)) return 'tablet';
+  if (/Mobi|Android/i.test(ua)) return 'mobile';
+  return 'desktop';
+}
+
+function calcMaxRun(arr) {
+  if (arr.length === 0) return 0;
+  let max = 1, cur = 1;
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] === arr[i-1]) { cur++; if (cur > max) max = cur; }
+    else cur = 1;
+  }
+  return max;
+}
+
+function calcTopTrigram(arr) {
+  if (arr.length < 3) return '';
+  const counts = {};
+  for (let i = 0; i <= arr.length - 3; i++) {
+    const t = arr[i] + '' + arr[i+1] + '' + arr[i+2];
+    counts[t] = (counts[t] || 0) + 1;
+  }
+  let best = '', bestN = 0;
+  for (const k in counts) {
+    if (counts[k] > bestN) { best = k; bestN = counts[k]; }
+  }
+  return best;
 }
 
 function sendStats(d) {
@@ -661,30 +715,37 @@ function showResult() {
   const won = state.balance >= state.initialBalance;
   const hasNext = state.level < LEVELS.length - 1;
 
+  // Context-aware result messages
   let title = '';
-  if (won) title = T.won;
-  else if (pct >= 70) title = T.predictable70;
-  else if (pct >= 60) title = T.predictable60;
-  else if (pct >= 55) title = T.almost55;
-  else if (pct >= 50) title = T.impressive50;
-  else title = T.incredible;
+  if (won) {
+    if (pct < 48) title = T.incredible;
+    else if (pct < 52) title = T.won;
+    else title = T.wonBarely;
+  } else {
+    if (pct >= 65) title = T.predictable70;
+    else if (pct >= 58) title = T.predictable60;
+    else if (pct >= 53) title = T.almost55;
+    else title = T.lostSoClose;
+  }
 
   if (won && hasNext && state.level + 1 > state.maxUnlocked) state.maxUnlocked = state.level + 1;
 
-  const count0 = state.presses.filter(p => p === 0).length;
-  const count1 = state.presses.length - count0;
+  // Use only current level's presses for display
+  const levelPresses = state.totalPresses > 0 ? state.presses.slice(-state.totalPresses) : [];
+  const count0 = levelPresses.filter(p => p === 0).length;
+  const count1 = levelPresses.length - count0;
 
   const balColor = state.balance >= state.initialBalance ? '#00ff88' : '#ff2244';
 
-  const cellSize = state.presses.length > 200 ? 4 : 6;
+  const cellSize = levelPresses.length > 200 ? 4 : 6;
   const cs = ';width:' + cellSize + 'px;height:' + cellSize + 'px';
 
   let pressMap = '';
-  state.presses.forEach(p => {
+  levelPresses.forEach(p => {
     pressMap += '<div class="cell" style="background:' + (p===0?'#333':'#aaa') + cs + '"></div>';
   });
   let predMap = '';
-  const warmup = state.presses.length - state.correct.length;
+  const warmup = state.totalPresses - state.correct.length;
   for (let i = 0; i < warmup; i++) predMap += '<div class="cell" style="background:#1a1a1a' + cs + '"></div>';
   state.correct.forEach(c => {
     predMap += '<div class="cell" style="background:' + (c?'#ff2244':'#00ff88') + cs + '"></div>';
@@ -693,15 +754,17 @@ function showResult() {
   let levelUpHTML = '';
   if (won && hasNext) {
     const nx = LEVELS[state.level + 1];
-    levelUpHTML = '<div class="result-level-up fade-item" style="animation-delay:350ms"><div class="level-up-title">' + T.unlocked + ' ' + T.levelName + ' ' + nx.id + '!</div><div class="level-up-desc">' + nx.presses + ' ' + T.pressesWord + ', $' + nx.balance + ' ' + T.atStart + '</div></div>';
+    const isLast = state.level + 1 === LEVELS.length - 1;
+    levelUpHTML = '<div class="result-level-up fade-item" style="animation-delay:350ms"><div class="level-up-title">' + T.unlocked + ' ' + T.levelName + ' ' + nx.id + '!</div><div class="level-up-desc">' + nx.presses + ' ' + T.pressesWord + ', $' + state.balance.toFixed(2) + ' ' + T.atStart + '</div></div>';
   } else if (won && !hasNext) {
-    levelUpHTML = '<div class="result-level-up fade-item" style="animation-delay:350ms"><div class="level-up-title" style="color:#ff2244">' + T.allLevels + '</div><div class="level-up-desc">' + T.allLevelsDesc + '</div></div>';
+    levelUpHTML = '<div class="result-level-up fade-item" style="animation-delay:350ms"><div class="level-up-title" style="color:#cc44ff">' + T.allLevels + '</div><div class="level-up-desc">' + T.allLevelsDesc + '<br>' + T.finalBalance + ': $' + state.balance.toFixed(2) + '</div></div>';
   }
 
   let btns = '';
   if (won && hasNext) {
     const nx = LEVELS[state.level + 1];
-    btns = '<button class="btn-next-level' + (nx.id===3?' final':'') + '" id="btnNextLevel">' + T.levelName + ' ' + nx.id + ' &rarr;</button><button class="btn-secondary" id="btnRetry">' + T.replayLevel + '</button>';
+    const isLast = state.level + 1 === LEVELS.length - 1;
+    btns = '<button class="btn-next-level' + (isLast ? ' final' : '') + '" id="btnNextLevel">' + T.levelName + ' ' + nx.id + ' &rarr;</button><button class="btn-secondary" id="btnRetry">' + T.replayLevel + '</button>';
   } else {
     btns = '<button class="btn-primary" id="btnRetry">' + T.retry + '</button>';
   }
@@ -741,13 +804,31 @@ function showResult() {
     if (canvas && state.balanceHistory.length > 1) drawBalanceGraph(canvas, state.balanceHistory, state.initialBalance);
   });
 
+  // Enhanced analytics
+  const accLast10 = state.correct.length >= 10 ? +(state.correct.slice(-10).filter(Boolean).length / 10 * 100).toFixed(1) : '';
+  const accLast20 = state.correct.length >= 20 ? +(state.correct.slice(-20).filter(Boolean).length / 20 * 100).toFixed(1) : '';
+
   sendStats({
-    sessionId: getSessionId(), level: lvl.id,
-    totalPresses: state.totalPresses, correctPredictions: correctN,
-    accuracy: +pct.toFixed(1), balance: state.balance, won: won,
-    reason: state.gameOverReason, ratio01: count0+'/'+count1,
-    maxRun: 0, topTrigram: '',
-    sequence: state.presses.join(''), userAgent: navigator.userAgent,
+    sessionId: getSessionId(),
+    attemptNumber: getAttemptNumber(),
+    level: lvl.id,
+    totalPresses: state.totalPresses,
+    correctPredictions: correctN,
+    accuracy: +pct.toFixed(1),
+    balance: state.balance,
+    won: won,
+    reason: state.gameOverReason,
+    ratio01: count0 + '/' + count1,
+    maxRun: calcMaxRun(levelPresses),
+    topTrigram: calcTopTrigram(levelPresses),
+    sequence: levelPresses.join(''),
+    timestamps: state.timestamps.join(','),
+    accLast10: accLast10,
+    accLast20: accLast20,
+    carryoverBalance: state.carryoverBalance,
+    device: getDeviceType(),
+    lang: currentLang,
+    userAgent: navigator.userAgent,
   });
 }
 
@@ -804,17 +885,22 @@ function startGame(levelIndex) {
   state.level = levelIndex || 0;
   const lvl = LEVELS[state.level];
 
-  // Carryover: if advancing to next level, expand table; otherwise reset
+  // Carryover: if advancing to next level, expand table + keep balance
   if (levelIndex > prevLevel && levelIndex > 0 && state.presses.length > 0) {
     expandTable(lvl.maxK);
+    state.carryoverBalance = state.balance;
+    state.initialBalance = state.balance;
+    state.balanceHistory = [state.balance];
   } else {
+    // Fresh start or replay
     state.presses = [];
     initTable(lvl.maxK);
+    state.balance = lvl.balance;
+    state.initialBalance = lvl.balance;
+    state.balanceHistory = [lvl.balance];
+    state.carryoverBalance = null;
   }
 
-  state.balance = lvl.balance;
-  state.initialBalance = lvl.balance;
-  state.balanceHistory = [lvl.balance];
   state.predictions = [];
   state.correct = [];
   state.totalPresses = 0;
@@ -822,6 +908,8 @@ function startGame(levelIndex) {
   state.gameOver = false;
   state.gameOverReason = '';
   state.lastPressTime = 0;
+  state.gameStartTime = Date.now();
+  state.timestamps = [];
   updateWater();
   updateHUD();
   document.getElementById('hudPredResult').className = 'hud-prediction-result';
